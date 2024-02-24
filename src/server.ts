@@ -1,40 +1,19 @@
+import { Signale } from "signale";
 import express from "express";
-import http from "http";
-import { Server } from "socket.io";
+import { usersRouter } from "./Users/infrastructure/UsersRouter";
+import cors from 'cors';
+import { datosRouter } from "./datos/infrastructure/DatosRouter";
 
-import { sensorRouter } from "./sensor/infrastructure/SensorRouter";
-import { handleWebSockets } from "./websocket/Websocketrouter";
+const app = express();
+const signale = new Signale();
+app.use(express.json());
+app.use(cors());
+app.use("/user", usersRouter);
+app.use("/datos", datosRouter);
 
-class App {
-  private app: express.Application = express();
-  private server: http.Server = http.createServer(this.app);
-  private io: Server | null = null;
+const port = 3010;
+const host = '0.0.0.0';
 
-  constructor() {
-    this.configure();
-  }
-
-  async configure() {
-    this.app.use(express.json());
-    this.app.use("/sensores", sensorRouter);
-  }
-
-  socketServer() {
-    this.io = new Server(this.server, {
-      cors: { origin: "*" }, // Permitir conexiones desde cualquier origen en el socket.io
-    });
-
-    // Utiliza la función handleWebSockets para manejar los eventos de los WebSockets.
-    handleWebSockets(this.io);
-  }
-
-  start() {
-    this.server.listen(3010, () => {
-      console.log(`Server online in port 3010`);
-    });
-  }
-}
-
-const app: App = new App();
-app.socketServer();
-app.start();
+app.listen(port, host, () => {
+  signale.success("Server online in port 3010");
+});
