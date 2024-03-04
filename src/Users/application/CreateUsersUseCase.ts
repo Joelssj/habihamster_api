@@ -5,7 +5,7 @@ export class CreateUsersUseCase{
     constructor(readonly usersRepository: UsersRepository ){}
 
     async run(
-        nombre: string,
+        nombre:string,
         correo: string,
         password: string
     ): Promise<Users | null> {

@@ -9,6 +9,7 @@ export class LoginController {
     const data = req.body
     try {
         const user = await this.loginUseCase.run(
+            data.nombre,
             data.correo,
             data.password
         );
